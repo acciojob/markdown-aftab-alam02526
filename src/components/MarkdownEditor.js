@@ -1,32 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { marked } from "marked";
+
+let markedLib;
+(async () => {
+  const { marked } = await import("marked");
+  markedLib = marked;
+})();
 
 const MarkdownEditor = () => {
   const [markdown, setMarkdown] = useState("");
   const [preview, setPreview] = useState("");
 
   useEffect(() => {
-    setPreview(marked(markdown));
+    if (markedLib) {
+      setPreview(markedLib(markdown));
+    }
   }, [markdown]);
-
-  const handleChange = (e) => {
-    setMarkdown(e.target.value);
-  };
 
   return (
     <div className="markdown-container">
-      {/* Input Section */}
       <div className="markdown-input">
         <h2>Markdown Input</h2>
         <textarea
           id="editor"
           value={markdown}
-          onChange={handleChange}
+          onChange={(e) => setMarkdown(e.target.value)}
           placeholder="Type your markdown here..."
         ></textarea>
       </div>
 
-      {/* Preview Section */}
       <div className="markdown-preview">
         <h2>Preview</h2>
         <div
@@ -39,3 +40,4 @@ const MarkdownEditor = () => {
 };
 
 export default MarkdownEditor;
+
